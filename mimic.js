@@ -20,7 +20,8 @@ detector.detectAllAppearance();
 // --- Utility values and functions ---
 
 // Unicode values for all emojis Affectiva can detect
-var emojis = [ 128528, 9786, 128515, 128524, 128527, 128521, 128535, 128539, 128540, 128542, 128545, 128563, 128561 ];
+var emojis = [ 128528, 128515, 128524, 128527, 128521, 128535, 128539, 128540, 128542, 128545, 128563, 128561 ];
+//var mimicemojis = [ 128528, 9786, 128515, 128524, 128527, 128521, 128535, 128539, 128540, 128542, 128545, 128563, 128561 ];
 
 // Update target emoji being displayed by supplying a unicode value
 function setTargetEmoji(code) {
@@ -108,6 +109,7 @@ detector.addEventListener("onInitializeSuccess", function() {
 // Add a callback to receive the results from processing an image
 // NOTE: The faces object contains a list of the faces detected in the image,
 //   probabilities for different expressions, emotions and appearance metrics
+
 detector.addEventListener("onImageResultsSuccess", function(faces, image, timestamp) {
   var canvas = $('#face_video_canvas')[0];
   if (!canvas)
@@ -132,8 +134,23 @@ detector.addEventListener("onImageResultsSuccess", function(faces, image, timest
     drawFeaturePoints(canvas, image, faces[0]);
     drawEmoji(canvas, image, faces[0]);
 
-    // TODO: Call your function to run the game (define it first!)
-    // <your code here>
+    
+    if(timestamp - last_update_time > 8 || emoji_correct){
+      emoji_face = Math.floor(Math.random() * 34);
+      var current_correct = correct;
+      last_update_time = timestamp;
+      total++; 
+      if(!emoji_correct){
+        var audio_file = incorrect_audio[incorrect_audio_index % incorrect_audio.length];
+        var audio = new Audio(audio_file)
+        audio.play();
+        incorrect_audio_index++;
+      }
+      emoji_correct = false;
+    }
+
+    update(faces[0],timestamp);
+    setScore(correct,total);
   }
 });
 
@@ -144,18 +161,16 @@ detector.addEventListener("onImageResultsSuccess", function(faces, image, timest
 function drawFeaturePoints(canvas, img, face) {
   // Obtain a 2D context object to draw on the canvas
   var ctx = canvas.getContext('2d');
-
-  // TODO: Set the stroke and/or fill style you want for each feature point marker
-  // See: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D#Fill_and_stroke_styles
-  // <your code here>
   
+  ctx.fillStyle = 'red';
+  ctx.strokeStyle = 'blue';
   // Loop over each feature point in the face
   for (var id in face.featurePoints) {
     var featurePoint = face.featurePoints[id];
 
-    // TODO: Draw feature point, e.g. as a circle using ctx.arc()
-    // See: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/arc
-    // <your code here>
+    ctx.beginPath();
+    ctx.arc(featurePoint.x,featurePoint.y,3,0,2*Math.PI);
+    ctx.stroke();
   }
 }
 
@@ -163,14 +178,8 @@ function drawFeaturePoints(canvas, img, face) {
 function drawEmoji(canvas, img, face) {
   // Obtain a 2D context object to draw on the canvas
   var ctx = canvas.getContext('2d');
-
-  // TODO: Set the font and style you want for the emoji
-  // <your code here>
-  
-  // TODO: Draw it using ctx.strokeText() or fillText()
-  // See: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillText
-  // TIP: Pick a particular feature point as an anchor so that the emoji sticks to your face
-  // <your code here>
+  ctx.font = '30px serif';
+  ctx.fillText(face.emojis.dominantEmoji,face.featurePoints[0].x -10,face.featurePoints[0].y);
 }
 
 // TODO: Define any variables and functions to implement the Mimic Me! game mechanics
@@ -186,4 +195,29 @@ function drawEmoji(canvas, img, face) {
 // - Define an initialization/reset function, and call it from the "onInitializeSuccess" event handler above
 // - Define a game reset function (same as init?), and call it from the onReset() function above
 
-// <your code here>
+ var correct = 0;
+ var total = 0;
+var last_update_time = 0;
+var correct_audio = ["Hi_I'm_mr_meeseeks_look_at_me.wav",'woo_vu_luvub_dub_dub.wav',"Riggity.wav","Oooo_yeah__caaan_doo!.wav"];
+var incorrect_audio = ["oh_man.wav","hey_ya_you_doing_ok_.wav"];
+var correct_audio_index = 0;
+var incorrect_audio_index = 0;
+var emoji_correct = false;
+var emoji_face  = 0;
+function update(face,timestamp){
+  
+  var emoji_target = emojis[emoji_face % emojis.length];
+  var audio_file = correct_audio[correct_audio_index % correct_audio.length];
+  setTargetEmoji(emoji_target);
+  
+  if(toUnicode(face.emojis.dominantEmoji) == emoji_target){
+    var audio = new Audio(audio_file);
+    audio.play();
+    last_update_time = 0;
+    emoji_correct = true;
+    correct++;
+    correct_audio_index++;
+  }
+  
+  
+}
