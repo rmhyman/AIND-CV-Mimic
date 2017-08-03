@@ -11779,22 +11779,7 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Feature-Points">Feature Points<a class="anchor-link" href="#Feature-Points">&#182;</a></h1><p>To draw the feature points, I obtain each individual feature point by selecting it using the <em>face</em> parameter that is passed into the <strong>drawFeaturePoints</strong> function.  I was able to analyze this object by setting a breakpoint within the function while running the application and inspecting the face parameter. Using the canvas context object I drew circles for each feature point using the <em>x</em> and <em>y</em> member variables of the featurepoint object.</p>
-
-<pre><code>function drawFeaturePoints(canvas, img, face) {
-  // Obtain a 2D context object to draw on the canvas
-  var ctx = canvas.getContext('2d');
-
-  ctx.fillStyle = 'red';
-  ctx.strokeStyle = 'blue';
-  // Loop over each feature point in the face
-  for (var id in face.featurePoints) {
-    var featurePoint = face.featurePoints[id];
-
-    ctx.beginPath();
-    ctx.arc(featurePoint.x,featurePoint.y,3,0,2*Math.PI);
-    ctx.stroke();
-  }
-}</code></pre>
+<p><img src="big_smile_cropped.png" alt="big_smile"></p>
 
 </div>
 </div>
@@ -11805,13 +11790,7 @@ div#notebook {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Dominant-Emoji">Dominant Emoji<a class="anchor-link" href="#Dominant-Emoji">&#182;</a></h1><p>To display the dominant emoji, I obtained this from the face parameter passed into the function. I randomly chose the first feature point as the reference point for where I wanted to draw the dominant emoji. Once I noticed that the first feature point was located on the left side of the face displayed, I decided to move it to the left by subtracting 10 from the feature point's x coordinate.  This placed it at a comformatable location that is easily visible.</p>
-
-<pre><code>function drawEmoji(canvas, img, face) {
-  // Obtain a 2D context object to draw on the canvas
-  var ctx = canvas.getContext('2d');
-  ctx.font = '30px serif';
-  ctx.fillText(face.emojis.dominantEmoji,face.featurePoints[0].x -10,face.featurePoints[0].y);
-}</code></pre>
+<p><img src="kiss_emoji_cropped.png" alt="kiss_emoji"></p>
 
 </div>
 </div>
@@ -11858,7 +11837,9 @@ div#notebook {
     setScore(correct,total);
   }</code></pre>
 <p>To put the final touches on the game, I decided to play some audio based on whether the emoji was mimic correctly or not.  I decided to use some soundbites from one of my favorite shows <a href="http://www.adultswim.com/videos/rick-and-morty/">Rick and Morty</a>.  I obtained the wav files from <a href="https://peal.io/soundboards/rick-and-morty">here</a>.  I inspected the speaker element objects from that website and copied the element that held the wav file source location.  Luckily, after I navigated to the source location, The wav file was downloadable.  So the game will play some audio based on whether the dominant emoji is correct or incorrect.</p>
-<p>One thing that I would like to note is that the Affectiva API doesn't work particularly well on dark faces such as mine. It would pick up the pink of my inner lip as my tongue being out and when I actually stuck my tongue out, it couldn't recogninze anything at all.  I also had a difficult time detecting my face with my glasses on. I eventually took my glasses off when testing to get better results. I spent most of the time trying to get the API to recognize my face more than anything.</p>
+<p><img src="glasses_surprise.png" alt="glasses_surprise"></p>
+<p>One thing that I would like to note is that the Affectiva API doesn't work particularly well on dark faces such as mine. It would pick up the pink of my inner lip as my tongue being out and when I actually stuck my tongue out, it couldn't recogninze anything at all.  I also had a difficult time detecting my face with my glasses on. I eventually took my glasses off when testing to get better results. I spent most of the time trying to get the API to recognize my face more than anything.  But I did manage to get a few for a screenshot.</p>
+<p><img src="tongue_out.png" alt="tongue_out"></p>
 
 </div>
 </div>
