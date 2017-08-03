@@ -205,6 +205,13 @@ var incorrect_audio_index = 0;
 var emoji_correct = false;
 var emoji_face  = 0;
 function update(face,timestamp){
+
+  //The update() function is called by the event listener
+  // when it detects your face.  This function sets the 
+  //emoji target and determines whether the dominant emoji
+  //detected from your face matches the emoji target.
+  //It will update num of correct faces you have made
+  //while playing the game.
   
   var emoji_target = emojis[emoji_face % emojis.length];
   var audio_file = correct_audio[correct_audio_index % correct_audio.length];
